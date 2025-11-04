@@ -49,6 +49,7 @@ dependencies:
   http: ^1.5.0
   cloud_firestore: ^6.1.0
   firebase_storage: ^13.0.4
+  google_fonts: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -90,7 +91,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   #fonts:
-    
+   # - family: CinzelDecorative
+    #  fonts:
+     #   - asset: assets/fonts/CinzelDecorative-Regular.ttf
+        
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

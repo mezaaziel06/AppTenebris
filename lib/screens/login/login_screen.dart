@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:apptenebris/core/constants/text_styles.dart';
+import '../splash/splash_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -8,19 +10,14 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 🖼 Fondo con la imagen vitral.jpg
           SizedBox.expand(
             child: Image.asset(
-              'assets/images/backgrounds/vitral.jpg', // Asegúrate de que la ruta sea correcta
+              'assets/images/backgrounds/vitral.jpg', 
               fit: BoxFit.cover,
             ),
           ),
 
-          // 🕶 Filtro oscuro encima del fondo
-          Container(
-            color: Colors.black.withOpacity(0.6),
-          ),
-
+         
           // 🔲 Contenido principal (formulario)
           Center(
             child: SingleChildScrollView(
@@ -28,19 +25,15 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // SVG del logo/título (si lo tienes)
-                  // SvgPicture.asset('assets/svgs/logo_ex_tenebris.svg', height: 120),
-
-                  const SizedBox(height: 40),
-
+                  
                   // Username
                   TextField(
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.black.withOpacity(0.4),
-                      labelText: 'Username',
-                      labelStyle: const TextStyle(color: Colors.redAccent),
+                      labelText: 'USERNAME',
+                      labelStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.redAccent),
                         borderRadius: BorderRadius.circular(12),
@@ -61,8 +54,8 @@ class LoginScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.black.withOpacity(0.4),
-                      labelText: 'Password',
-                      labelStyle: const TextStyle(color: Colors.redAccent),
+                      labelText: 'PASSWORD',
+                      labelStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.redAccent),
                         borderRadius: BorderRadius.circular(12),
@@ -74,9 +67,8 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
 
-                  // Botón LOGIN
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 84, 0, 0),
@@ -89,17 +81,22 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      // Navegación a la galería u otra pantalla
-                      // Navigator.pushNamed(context, '/gallery');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SplashScreen()),
+                      );
                     },
-                    child: const Text(
-                      'LOGIN',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 16,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+                    child: Text(
+  'LOGIN',
+  style: AppTextStyles.title.copyWith(
+    color: const Color.fromARGB(255, 0, 0, 0),
+    fontSize: 18,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 2.0,
+  ),
+),
+
+
                   ),
                 ],
               ),
