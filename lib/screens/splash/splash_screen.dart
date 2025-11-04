@@ -1,3 +1,4 @@
+import 'package:apptenebris/screens/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../screens/login/login_screen.dart';
@@ -32,11 +33,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navegar al login después de 3 segundos
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const GalleryScreen()),
       );
     });
   }
@@ -64,13 +64,12 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 🔥 Logo SVG grande
                 SvgPicture.asset(
                   'assets/images/svgs/titulo.svg',
                   height: 300,
                 ),
                 const SizedBox(height: 60),
-                // 🔴 Animación de bolitas rojas
+                // Animación de bolitas rojas
                 const _RedDotsLoader(),
               ],
             ),
@@ -81,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-// Widget animado de bolitas rojas girando 🔴
+// Widget animado 
 class _RedDotsLoader extends StatefulWidget {
   const _RedDotsLoader();
 

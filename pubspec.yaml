@@ -50,6 +50,7 @@ dependencies:
   cloud_firestore: ^6.1.0
   firebase_storage: ^13.0.4
   google_fonts: ^6.3.2
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,7 @@ flutter:
   assets:
     - assets/images/backgrounds/
     - assets/images/svgs/
+    
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
