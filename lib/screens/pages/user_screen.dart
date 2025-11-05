@@ -34,7 +34,7 @@ class UserScreen extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 60,
                     backgroundColor: const Color.fromARGB(255, 79, 6, 6),
-                    backgroundImage: AssetImage('assets/profile.png')
+                    backgroundImage: AssetImage('assets/images/backgrounds/avatar.jpg'),
                   ),
                 ),
 
