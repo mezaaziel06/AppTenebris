@@ -34,11 +34,9 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const GalleryScreen()),
-      );
-    });
+  Navigator.pushReplacementNamed(context, '/app');
+});
+
   }
 
   @override

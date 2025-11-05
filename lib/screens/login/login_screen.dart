@@ -47,7 +47,6 @@ class LoginScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // Password
                   TextField(
                     obscureText: true,
                     style: const TextStyle(color: Colors.white),
@@ -80,12 +79,11 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed('/app');
-
-                    },
+                   onPressed: () {
+                     Navigator.pushReplacementNamed(context, '/splash');
+                  },
                     child: Text(
-  'LOGIN',
+                    'LOGIN',
   style: AppTextStyles.title.copyWith(
     color: const Color.fromARGB(255, 0, 0, 0),
     fontSize: 18,
