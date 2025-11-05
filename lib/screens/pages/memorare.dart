@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '/screens/pages/bestiarium.dart';
 
 /// ====== Ajustes de layout (toca aquí para afinar) ======
-const double kHeroHeight = 320;          // ↑ altura del HERO (antes 260)
-const double kSpaceAfterHero = 28;       // espacio Hero → Carrusel
-const double kAvatarSize = 76;           // diámetro de cada avatar
-const double kCarouselHeight = 112;      // alto total carrusel (círculo + label)
-const double kSpaceAfterCarousel = 28;   // espacio Carrusel → Lore
-const double kLoreCardHeight = 180;      // ↑ altura de cada card de Lore (antes 132)
-const double kLoreTitleSize = 22;        // tamaño del título "Lore"
+const double kHeroHeight = 320; // ↑ altura del HERO (antes 260)
+const double kSpaceAfterHero = 28; // espacio Hero → Carrusel
+const double kAvatarSize = 76; // diámetro de cada avatar
+const double kCarouselHeight = 112; // alto total carrusel (círculo + label)
+const double kSpaceAfterCarousel = 28; // espacio Carrusel → Lore
+const double kLoreCardHeight = 180; // ↑ altura de cada card de Lore (antes 132)
+const double kLoreTitleSize = 22; // tamaño del título "Lore"
 
 class MemorareScreen extends StatelessWidget {
   const MemorareScreen({super.key});
 
   // Catálogo de iconos locales
   List<_AvatarData> get _avatars => const [
-    _AvatarData('Cáscara',    'assets/images/svgs/cascara.svg'),
+    _AvatarData('Cáscara', 'assets/images/svgs/cascara.svg'),
     _AvatarData('Lamentador', 'assets/images/svgs/lamentador.svg'),
-    _AvatarData('Stalker',    'assets/images/svgs/stalker.svg'),
+    _AvatarData('Stalker', 'assets/images/svgs/stalker.svg'),
     _AvatarData('Nicromante', 'assets/images/svgs/nicromante.svg'),
-    _AvatarData('Odium',      'assets/images/svgs/odium.svg'),
-    _AvatarData('Mala Copa',  'assets/images/svgs/mala copa.svg'),
+    _AvatarData('Odium', 'assets/images/svgs/odium.svg'),
+    _AvatarData('Mala Copa', 'assets/images/svgs/mala copa.svg'),
   ];
 
   @override
@@ -90,12 +91,23 @@ class MemorareScreen extends StatelessWidget {
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, i) {
                   final a = _avatars[i];
-                  return _AvatarItem(
-                    label: a.label,
-                    asset: a.asset,
-                    circleColor: coffee,
-                    borderColor: coffeeBorder,
-                    size: kAvatarSize,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              const BestiariumScreen(), // <- tu pantalla destino
+                        ),
+                      );
+                    },
+                    child: _AvatarItem(
+                      label: a.label,
+                      asset: a.asset,
+                      circleColor: coffee,
+                      borderColor: coffeeBorder,
+                      size: kAvatarSize,
+                    ),
                   );
                 },
               ),
@@ -133,9 +145,21 @@ class MemorareScreen extends StatelessWidget {
 
                   Row(
                     children: [
-                      Expanded(child: _LoreCard(title: 'Limbo', image: heroImage, height: kLoreCardHeight)),
+                      Expanded(
+                        child: _LoreCard(
+                          title: 'Limbo',
+                          image: heroImage,
+                          height: kLoreCardHeight,
+                        ),
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: _LoreCard(title: 'Lujuria', image: heroImage, height: kLoreCardHeight)),
+                      Expanded(
+                        child: _LoreCard(
+                          title: 'Lujuria',
+                          image: heroImage,
+                          height: kLoreCardHeight,
+                        ),
+                      ),
                     ],
                   ),
 
@@ -182,7 +206,11 @@ class _AvatarItem extends StatelessWidget {
             color: circleColor,
             border: Border.all(color: borderColor, width: 1.2),
             boxShadow: const [
-              BoxShadow(color: Colors.black45, blurRadius: 6, offset: Offset(0, 3)),
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
             ],
           ),
           child: ClipOval(
@@ -203,9 +231,9 @@ class _AvatarItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.92),
-                ),
+              fontWeight: FontWeight.w600,
+              color: Colors.white.withOpacity(0.92),
+            ),
           ),
         ),
       ],
