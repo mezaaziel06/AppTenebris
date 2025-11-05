@@ -81,10 +81,8 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SplashScreen()),
-                      );
+                      Navigator.of(context).pushReplacementNamed('/app');
+
                     },
                     child: Text(
   'LOGIN',
