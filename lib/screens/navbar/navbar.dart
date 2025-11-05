@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// IMPORTA TUS PANTALLAS REALES
+// Raíces de cada tab (NO importes Bestiarium aquí)
 import '/screens/pages/gallery_screen.dart';
 import '/screens/pages/chatbot_screen.dart';
 import '/screens/pages/user_screen.dart';
@@ -8,37 +8,29 @@ import '/screens/pages/memorare.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
-
   @override
   State<AppShell> createState() => _AppShellState();
-
 }
 
 class _AppShellState extends State<AppShell> {
-  int _index = 1; // inicia en Discover (como la captura)
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-    _pages = const [
-      GalleryScreen(),
-      MemorareScreen(),
-      ChatbotScreen(),
-      UserScreen()
-    ];
-  }
+  int _index = 1; // Discover por defecto
+  final _navKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
 
   @override
   Widget build(BuildContext context) {
-    // Colores tipo “dorado” para el seleccionado
-    final selected = const Color.fromARGB(255, 238, 64, 64); 
+    final selected = const Color.fromARGB(255, 238, 64, 64);
     final unselected = Colors.white70;
 
     return Scaffold(
-      body: IndexedStack(index: _index, children: _pages),
-
-      // NavigationBar (Material 3). Si prefieres el clásico, ver nota al final.
+      body: IndexedStack(
+        index: _index,
+        children: [
+          _TabNav(navKey: _navKeys[0], root: const GalleryScreen()),
+          _TabNav(navKey: _navKeys[1], root: const MemorareScreen()),
+          _TabNav(navKey: _navKeys[2], root: const ChatbotScreen()),
+          _TabNav(navKey: _navKeys[3], root: const UserScreen()),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
@@ -46,8 +38,8 @@ class _AppShellState extends State<AppShell> {
         surfaceTintColor: Colors.transparent,
         shadowColor: Colors.black,
         backgroundColor: const Color(0xFF0E0E0E),
-        indicatorColor: selected.withOpacity(0.10), // halo sutil
-        indicatorShape: const CircleBorder(),       // círculo como la referencia
+        indicatorColor: selected.withOpacity(0.10),
+        indicatorShape: const CircleBorder(),
         destinations: [
           NavigationDestination(
             icon: Icon(Icons.photo_library_outlined, color: unselected),
@@ -71,6 +63,21 @@ class _AppShellState extends State<AppShell> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TabNav extends StatelessWidget {
+  final GlobalKey<NavigatorState> navKey;
+  final Widget root;
+  const _TabNav({required this.navKey, required this.root});
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navKey,
+      onGenerateRoute: (settings) =>
+          MaterialPageRoute(builder: (_) => root, settings: settings),
     );
   }
 }

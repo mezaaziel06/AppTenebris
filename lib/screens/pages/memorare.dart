@@ -93,14 +93,11 @@ class MemorareScreen extends StatelessWidget {
                   final a = _avatars[i];
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              const BestiariumScreen(), // <- tu pantalla destino
-                        ),
-                      );
-                    },
+  Navigator.of(context, rootNavigator: false).push(
+    MaterialPageRoute(builder: (_) => const BestiariumScreen()),
+  );
+},
+
                     child: _AvatarItem(
                       label: a.label,
                       asset: a.asset,
