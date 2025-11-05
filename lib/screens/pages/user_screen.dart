@@ -33,22 +33,32 @@ class UserScreen extends StatelessWidget {
                 Center(
                   child: CircleAvatar(
                     radius: 60,
-                    backgroundColor: Colors.white,
-                    backgroundImage: AssetImage('assets/profile.jpg'), // Cambia por tu imagen
+                    backgroundColor: const Color.fromARGB(255, 79, 6, 6),
+                    backgroundImage: AssetImage('assets/profile.png')
                   ),
                 ),
 
                 const SizedBox(height: 12),
 
                 // Nombre del usuario
-                const Text(
-                  'Mauricio Suárez',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // Nombre del usuario
+Container(
+  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+  decoration: BoxDecoration(
+    color: Color.fromARGB(105, 14, 14, 1), // Fondo rojo
+    borderRadius: BorderRadius.circular(30), // Forma ovalada
+  ),
+  child: const Text(
+    'SirGalahad',
+    style: TextStyle(
+      color: Colors.white, // Texto blanco
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.2,
+    ),
+  ),
+),
+
 
                 const SizedBox(height: 8),
 
@@ -73,7 +83,7 @@ class UserScreen extends StatelessWidget {
                       return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF1E1E2C),
+                          color: Color.fromARGB(255, 61, 60, 60),
                           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                         ),
                         child: SingleChildScrollView(
@@ -88,7 +98,7 @@ class UserScreen extends StatelessWidget {
                                   height: 5,
                                   margin: const EdgeInsets.only(bottom: 20),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[700],
+                                    color: Color.fromARGB(53, 230, 230, 225),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
@@ -98,7 +108,7 @@ class UserScreen extends StatelessWidget {
                               const Text(
                                 'Estadísticas',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -108,9 +118,9 @@ class UserScreen extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: const [
-                                  _StatCard(label: 'Nivel', value: '45'),
-                                  _StatCard(label: 'Muertes', value: '120'),
-                                  _StatCard(label: 'Puntos', value: '3420'),
+                                  _StatCard(label: 'Muertes', value: '45'),
+                                  _StatCard(label: 'Zona', value: '120'),
+                                  _StatCard(label: 'Lugubres', value: '3420'),
                                 ],
                               ),
 
@@ -128,13 +138,13 @@ class UserScreen extends StatelessWidget {
                               const SizedBox(height: 10),
                               _AchievementTile(
                                 icon: Icons.star,
-                                title: 'Maestro de batalla',
+                                title: 'Pecador',
                                 description: 'Derrota a 100 enemigos sin morir.',
                               ),
                               _AchievementTile(
                                 icon: Icons.shield,
-                                title: 'Defensor legendario',
-                                description: 'Protege tu base 50 veces.',
+                                title: 'Abandonad toda esperanza',
+                                description: 'Supera el prólogo.',
                               ),
 
                               const SizedBox(height: 25),
