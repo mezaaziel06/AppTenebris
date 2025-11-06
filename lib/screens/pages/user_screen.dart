@@ -83,7 +83,7 @@ Container(
                       return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 61, 60, 60),
+                          color: Color.fromARGB(255, 41, 39, 39),
                           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                         ),
                         child: SingleChildScrollView(
@@ -201,7 +201,7 @@ class _StatCard extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: Colors.lightBlueAccent,
+            color: Color.fromARGB(255, 143, 7, 10),
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
