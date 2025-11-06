@@ -83,7 +83,7 @@ Container(
                       return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 41, 39, 39),
+                          color: Color.fromARGB(255, 29, 27, 27),
                           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                         ),
                         child: SingleChildScrollView(
@@ -98,7 +98,7 @@ Container(
                                   height: 5,
                                   margin: const EdgeInsets.only(bottom: 20),
                                   decoration: BoxDecoration(
-                                    color: Color.fromARGB(53, 230, 230, 225),
+                                    color: Color.fromARGB(53, 232, 232, 227),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
