@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/login/register_screen.dart';    
 import 'screens/login/login_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/pages/gallery_screen.dart';
@@ -33,8 +34,9 @@ class ExTenebrisApp extends StatelessWidget {
           }),
         ),
       ),
-      initialRoute: '/login',
+      initialRoute: '/register',
       routes: {
+        '/register': (context) => const RegisterScreen(),
         '/login': (context) => const LoginScreen(),
         '/splash': (context) => const SplashScreen(),
 
