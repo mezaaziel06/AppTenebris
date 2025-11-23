@@ -18,11 +18,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _registerUser() async {
     final username = _usernameController.text;
-    final email = _emailController.text;
     final password = _passwordController.text;
     final confirm = _confirmController.text;
 
-    if (username.isEmpty || email.isEmpty || password.isEmpty || confirm.isEmpty) {
+    if (username.isEmpty || password.isEmpty || confirm.isEmpty) {
       _showMessage('Todos los campos son obligatorios');
       return;
     }
@@ -33,11 +32,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/auth/register/'), 
+      Uri.parse('http://127.0.0.1:8000/auth/register/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
-        'email': email,
         'password': password,
         'confirm_password': confirm,
       }),
@@ -52,9 +50,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -75,21 +73,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   _buildTextField(_usernameController, 'USERNAME'),
                   const SizedBox(height: 20),
-                  _buildTextField(_emailController, 'EMAIL'),
+                  _buildTextField(
+                    _passwordController,
+                    'PASSWORD',
+                    obscure: true,
+                  ),
                   const SizedBox(height: 20),
-                  _buildTextField(_passwordController, 'PASSWORD', obscure: true),
-                  const SizedBox(height: 20),
-                  _buildTextField(_confirmController, 'CONFIRM PASSWORD', obscure: true),
+                  _buildTextField(
+                    _confirmController,
+                    'CONFIRM PASSWORD',
+                    obscure: true,
+                  ),
                   const SizedBox(height: 40),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 84, 0, 0),
-                      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 80,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: _registerUser,
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
                     child: Text(
                       'REGISTER',
                       style: AppTextStyles.title.copyWith(
@@ -109,7 +118,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, {bool obscure = false}) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    bool obscure = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: obscure,

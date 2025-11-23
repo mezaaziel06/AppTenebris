@@ -8,7 +8,7 @@ class BestiariumScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -22,32 +22,42 @@ class BestiariumScreen extends StatelessWidget {
                     height: 260,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/images/backgrounds/vitral.jpg'),
+                        image: AssetImage(
+                          'assets/images/backgrounds/vitral.jpg',
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   // Capa oscura
-                  Container(
-                    height: 260,
-                    color: Colors.black.withOpacity(0.55),
-                  ),
-                  // Barra superior
+                  Container(height: 260, color: Colors.black.withOpacity(0.55)),
+                  // Barra superior con botón regresar
                   Positioned(
                     top: 16,
                     left: 16,
                     right: 16,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Bestiarium',
-                          style: TextStyle(
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: const Text(
+                              'Bestiarium',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 48),
                       ],
                     ),
                   ),
@@ -106,11 +116,7 @@ class BestiariumScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: const Text(
-                  'Lorem Ipsum is simply dummy text of the printing and typesetting industry. '
-                  'Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, '
-                  'when an unknown printer took a galley of type and scrambled it to make a type specimen book. '
-                  'It has survived not only five centuries, but also the leap into electronic typesetting, '
-                  'remaining essentially unchanged.',
+                  'Uno de los jefes y enemigos mas poderosos que encontraras en el infierno.Su rostro es una calavera agrietada, con cuencas vacías que parecen absorber la luz. De su cráneo brotan astas retorcidas como raíces de un árbol maldito, y su mano huesuda se extiende como si invocara almas perdidas.',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -149,15 +155,15 @@ class BestiariumScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
+              const SizedBox(height: 12),
+
               // Scroll horizontal de zonas
               SizedBox(
                 height: 150,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [
-                    _buildZoneCard('Limbo'),
-                  ],
+                  children: [_buildZoneCard('Limbo')],
                 ),
               ),
 
@@ -172,6 +178,21 @@ class BestiariumScreen extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Texto descriptivo / característica de comportamiento
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Text(
+                  '''Tendencia: Acecha en la penumbra y realiza emboscadas desde las sombras; evita ataques directos y prioriza ataques rápidos cuando el jugador está distraído. Se repliega tras recibir daño intenso.''',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    height: 1.4,
                   ),
                 ),
               ),
@@ -196,7 +217,7 @@ class BestiariumScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               image: const DecorationImage(
-                image: AssetImage('assets/images/placeholder_zone.jpg'),
+                image: AssetImage('assets/images/backgrounds/vitral.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -209,10 +230,7 @@ class BestiariumScreen extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
-                ],
+                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
               ),
             ),
           ),

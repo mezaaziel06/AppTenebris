@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dio/dio.dart';
 
+// -----------------------------------------------------------------------------
+// ChatbotScreen (archivo listo para pegar)
+// -----------------------------------------------------------------------------
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ChatbotScreen(),
-  ));
+  runApp(
+    const MaterialApp(debugShowCheckedModeBanner: false, home: ChatbotScreen()),
+  );
 }
 
 class ChatbotScreen extends StatefulWidget {
@@ -21,7 +24,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   static const avatarImage = 'assets/images/backgrounds/ira.jpg';
   static const commentAvatarsPath = 'assets/images/svgs/';
 
-  // Límite del sheet (para alinear el título)
   static const double kMaxSheet = 0.60;
 
   // Estado
@@ -29,47 +31,44 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final _focusNode = FocusNode();
   ScrollController? _sheetCtrl;
 
-  final List<_Message> _items = [
-    const _Message.system(name: 'Comentarios'),
-    const _Message(
-      name: 'Piyush',
-      text: 'No puedo pasar el nivel 1',
-      avatar: '${commentAvatarsPath}odium.svg',
-      isUser: false,
-    ),
-    const _Message(
-      name: 'Jagjit',
-      text: 'Buaf q pro',
-      avatar: '${commentAvatarsPath}lamentador.svg',
-      isUser: false,
-    ),
-    const _Message(
-      name: 'Pradeep',
-      text: 'Gracias por la guía',
-      avatar: '${commentAvatarsPath}stalker.svg',
-      isUser: false,
-    ),
-    const _Message(
-      name: 'Gunnagyam',
-      text: 'awa de coco',
-      avatar: '${commentAvatarsPath}nicromante.svg',
-      isUser: false,
-    ),
-    const _Message(
-      name: 'Sumit',
-      text: 'detrás de ti',
-      avatar: '${commentAvatarsPath}cascara.svg',
-      isUser: false,
-    ),
+  // Sugerencias (chips)
+  final List<String> _suggestions = [
+    '¿Cómo paso el nivel?',
+    'Dame una pista',
+    '¿Qué hacen los lamentos?',
+    'Explica a Odium',
+    '¿Dónde está el símbolo rojo?',
+    'Me atoro en un puzzle',
+    '¿Cómo derrotar al jefe?',
+    'Recomendaciones de equipo',
+    'Buscar coleccionables cerca',
+    'Atajos y secretos',
   ];
+
+  // Lista de mensajes (vacía al inicio — el usuario iniciará la conversación)
+  final List<_Message> _items = [];
+
+  // Typing indicator
+  bool _isTyping = false;
+
+  // Dio client (para consumo de API real)
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
   @override
   void dispose() {
     _textCtrl.dispose();
     _focusNode.dispose();
+    _sheetCtrl = null;
+    _dio.close();
     super.dispose();
   }
 
+  // Enviar mensaje local y solicitar respuesta
   void _send() {
     final text = _textCtrl.text.trim();
     if (text.isEmpty) return;
@@ -77,14 +76,40 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     setState(() {
       _items.add(_Message(name: 'Tú', text: text, isUser: true));
     });
-    _textCtrl.clear();
 
-    // Auto-scroll al final dentro del sheet
+    _textCtrl.clear();
+    _focusNode.unfocus();
+
+    _scrollToBottom();
+
+    // Mostrar typing y obtener respuesta (local o desde API)
+    setState(() => _isTyping = true);
+
+    Future.delayed(const Duration(milliseconds: 400), () async {
+      // Puedes cambiar _getBotReplyLocal por _getBotReplyFromApi para usar tu API.
+      final reply = await _getBotReplyLocal(text);
+      setState(() {
+        _isTyping = false;
+        _items.add(
+          _Message(
+            name: 'Guía',
+            text: reply,
+            isUser: false,
+            avatar: '${commentAvatarsPath}stalker.svg',
+          ),
+        );
+      });
+      _scrollToBottom();
+    });
+  }
+
+  // Auto-scroll seguro al final del sheet
+  void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final c = _sheetCtrl;
       if (c != null && c.hasClients) {
         c.animateTo(
-          c.position.maxScrollExtent + 120,
+          c.position.maxScrollExtent + 140,
           duration: const Duration(milliseconds: 260),
           curve: Curves.easeOut,
         );
@@ -92,17 +117,78 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
+  // Respuesta simple local (puedes expandir la lógica)
+  Future<String> _getBotReplyLocal(String question) async {
+    final q = question.toLowerCase();
+    if (q.contains('nivel')) {
+      return 'Observa los patrones en la sala: los lamentos forman la clave.';
+    } else if (q.contains('pista')) {
+      return 'Escucha el eco. A veces el silencio está resaltado en rojo.';
+    } else if (q.contains('odium')) {
+      return 'Odium se alimenta de recuerdos rotos. Busca su símbolo en la pared.';
+    } else if (q.contains('hola') || q.contains('hey')) {
+      return 'Hola, soy tu guía. ¿En qué parte te atoras?';
+    }
+    return 'Interesante... No tengo una respuesta concreta aún, prueba otra pregunta o usa las sugerencias.';
+  }
+
+  // Ejemplo: obtener respuesta desde tu API (descomenta y adapta)
+  Future<String> _getBotReplyFromApi(String question) async {
+    try {
+      // Cambia la URL por la de tu API
+      final response = await _dio.post(
+        'https://tu-api.com/chat',
+        data: {'message': question},
+      );
+      // Ajusta según la estructura de tu respuesta
+      if (response.data != null) {
+        // Ejemplo: { "answer": "texto..." }
+        final data = response.data;
+        final answer = data['answer'] ?? data['result'] ?? data['message'];
+        return answer?.toString() ?? 'Respuesta inválida desde la API';
+      }
+      return 'La API no devolvió datos';
+    } catch (e) {
+      // Manejo simple de errores
+      return 'Error al conectar con la API: ${e.toString()}';
+    }
+  }
+
+  // Si el usuario toca una sugerencia
+  void _onSuggestionTap(String text) {
+    setState(() {
+      _items.add(_Message(name: 'Tú', text: text, isUser: true));
+      _isTyping = true;
+    });
+    _scrollToBottom();
+
+    Future.delayed(const Duration(milliseconds: 400), () async {
+      final reply = await _getBotReplyLocal(text);
+      setState(() {
+        _isTyping = false;
+        _items.add(
+          _Message(
+            name: 'Guía',
+            text: reply,
+            isUser: false,
+            avatar: '${commentAvatarsPath}stalker.svg',
+          ),
+        );
+      });
+      _scrollToBottom();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // Deja que el teclado empuje el input fijo (abajo)
     return Scaffold(
       backgroundColor: const Color(0xFF0B0B0B),
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          // ===== Fondo principal (nivel) =====
+          // Fondo
           Positioned.fill(
             child: Image.asset(
               backgroundImage,
@@ -112,7 +198,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
           ),
 
-          // ===== Degradado superior sobre la imagen (profundidad) =====
+          // Degradado superior
           Positioned.fill(
             child: IgnorePointer(
               child: Container(
@@ -131,14 +217,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
           ),
 
-          // ===== Top bar + avatar (parte del "nivel") =====
+          // Top bar y avatar
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // top bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -147,8 +235,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           color: Colors.black.withOpacity(0.55),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.keyboard_arrow_down_rounded,
-                            color: Colors.white, size: 20),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                       const Spacer(),
                       const _ViewsBadge(count: '124.5K'),
@@ -156,8 +247,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-
-                // avatar "nivel"
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Align(
@@ -186,15 +275,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     ),
                   ),
                 ),
-                // (No ponemos el título aquí)
               ],
             ),
           ),
 
-          // ===== Título + "Seguir" ANCLADOS justo arriba del límite del chat =====
+          // Título + seguir (anclado arriba del sheet)
           Positioned(
-            // El borde superior del chat a su máximo está a 0.60 * altura desde abajo.
-            // Colocamos el título justo un poco por encima (8 px).
             bottom: size.height * kMaxSheet + 8,
             left: 16,
             right: 16,
@@ -220,7 +306,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     backgroundColor: redAccent,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 10),
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -237,28 +325,28 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
           ),
 
-          // ===== Panel de chat arrastrable (oscuro sólido, sin transparencias) =====
+          // Sheet arrastrable del chat
           DraggableScrollableSheet(
             minChildSize: 0.28,
             initialChildSize: 0.45,
-            maxChildSize: kMaxSheet, // 0.60
+            maxChildSize: kMaxSheet,
             snap: true,
             snapSizes: const [0.28, 0.45, kMaxSheet],
             builder: (context, controller) {
               _sheetCtrl ??= controller;
-
-              // Altura reservada para el input fijo
-              const inputReserve = 80.0;
+              const inputReserve = 120.0; // más espacio para chips + input
 
               return Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF141212), // tono oscuro sólido
+                  color: const Color(0xFF141212),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
-                  border:
-                      Border.all(color: Colors.white.withOpacity(0.07), width: 1),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.07),
+                    width: 1,
+                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
@@ -268,7 +356,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   child: CustomScrollView(
                     controller: controller,
                     slivers: [
-                      // handle + etiqueta "Comentarios"
                       SliverToBoxAdapter(
                         child: Column(
                           children: [
@@ -301,31 +388,71 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         ),
                       ),
 
-                      // lista con divisiones sutiles
+                      // Lista de mensajes (cada mensaje usa _ChatBubble)
                       SliverList.separated(
                         itemCount: _items.length,
-                        separatorBuilder: (_, __) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Colors.white.withOpacity(0.06),
-                          ),
-                        ),
+                        separatorBuilder: (_, __) => const SizedBox(height: 0),
                         itemBuilder: (context, i) {
                           final m = _items[i];
                           if (m.isSystemLabel) return const SizedBox.shrink();
-                          if (m.isUser) return _UserBubble(text: m.text);
-                          return _CommentItem(
-                            name: m.name,
-                            message: m.text,
-                            avatar: m.avatar!,
-                          );
+                          return _ChatBubble(m);
                         },
                       ),
 
-                      // espacio inferior para no tapar últimos ítems por el input fijo
-                      const SliverToBoxAdapter(child: SizedBox(height: inputReserve)),
+                      // typing indicator y margen final
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            if (_isTyping)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.55),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        SizedBox(
+                                          width: 8,
+                                          height: 8,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white70,
+                                                ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'La guía está escribiendo...',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: inputReserve),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -333,7 +460,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             },
           ),
 
-          // ===== Velo inferior + Input FIJO =====
+          // Velo inferior + Input FIJO con chips de sugerencias
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -355,50 +482,104 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               ),
               child: SafeArea(
                 top: false,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Campo de texto (oscuro sólido, borde rojo)
-                    Expanded(
-                      child: Container(
-                        height: 56,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF181515), // oscuro sólido
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: redAccent, // borde rojo
-                            width: 1,
-                          ),
-                        ),
-                        child: TextField(
-                          controller: _textCtrl,
-                          focusNode: _focusNode,
-                          onSubmitted: (_) => _send(),
-                          style: const TextStyle(color: Colors.white, fontSize: 14),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Di algo...',
-                            hintStyle: TextStyle(color: Colors.white60, fontSize: 14),
-                          ),
-                        ),
+                    // Sugerencias (chips horizontales)
+                    SizedBox(
+                      height: 46,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _suggestions.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        itemBuilder: (context, index) {
+                          final text = _suggestions[index];
+                          return GestureDetector(
+                            onTap: () => _onSuggestionTap(text),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: redAccent.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.12),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: redAccent.withOpacity(0.25),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                text,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    // Botón enviar ROJO
-                    GestureDetector(
-                      onTap: _send,
-                      child: Container(
-                        height: 56,
-                        width: 56,
-                        decoration: BoxDecoration(
-                          color: redAccent,
-                          borderRadius: BorderRadius.circular(16),
+                    const SizedBox(height: 10),
+
+                    // Campo de texto + boton enviar
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF181515),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: redAccent, width: 1),
+                            ),
+                            child: TextField(
+                              controller: _textCtrl,
+                              focusNode: _focusNode,
+                              onSubmitted: (_) => _send(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Di algo...',
+                                hintStyle: TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        child:
-                            const Icon(Icons.arrow_upward_rounded, color: Colors.white),
-                      ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: _send,
+                          child: Container(
+                            height: 56,
+                            width: 56,
+                            decoration: BoxDecoration(
+                              color: redAccent,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_upward_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -427,12 +608,11 @@ class _Message {
     this.isUser = false,
   }) : isSystemLabel = false;
 
-  // FIX: constructor "system" correcto
   const _Message.system({required this.name})
-      : text = '',
-        avatar = null,
-        isUser = false,
-        isSystemLabel = true;
+    : text = '',
+      avatar = null,
+      isUser = false,
+      isSystemLabel = true;
 }
 
 class _ViewsBadge extends StatelessWidget {
@@ -450,7 +630,11 @@ class _ViewsBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.remove_red_eye_outlined, size: 14, color: Colors.white70),
+          const Icon(
+            Icons.remove_red_eye_outlined,
+            size: 14,
+            color: Colors.white70,
+          ),
           const SizedBox(width: 6),
           Text(
             count,
@@ -466,6 +650,7 @@ class _ViewsBadge extends StatelessWidget {
   }
 }
 
+/// Item de comentario (izquierda) — usa SVGs para avatares
 class _CommentItem extends StatelessWidget {
   final String name;
   final String message;
@@ -485,7 +670,7 @@ class _CommentItem extends StatelessWidget {
         backgroundColor: const Color(0xFF0F0F0F),
         child: SvgPicture.asset(avatar, width: 30, height: 30),
       ),
-      title: const SizedBox.shrink(), // ocultamos nombre para clavar el mock
+      title: const SizedBox.shrink(),
       subtitle: Text(
         message,
         style: const TextStyle(color: Colors.white70, fontSize: 13),
@@ -497,23 +682,48 @@ class _CommentItem extends StatelessWidget {
   }
 }
 
-/// Burbuja simple para mensajes del usuario (lado derecho)
-class _UserBubble extends StatelessWidget {
-  final String text;
-  const _UserBubble({required this.text});
+/// Burbuja principal usada por mensajes (izquierda/derecha)
+class _ChatBubble extends StatelessWidget {
+  final _Message msg;
+  const _ChatBubble(this.msg);
+
   @override
   Widget build(BuildContext context) {
+    final isUser = msg.isUser;
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(56, 6, 16, 6),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xFF7A0E0E), // rojo para mensajes del usuario
-            borderRadius: BorderRadius.circular(14),
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: isUser
+                  ? const Color(0xFF7A0E0E).withOpacity(0.95)
+                  : Colors.black.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isUser
+                    ? Colors.red.shade700
+                    : Colors.white.withOpacity(0.06),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isUser
+                      ? Colors.red.withOpacity(0.28)
+                      : Colors.black.withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              msg.text,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
           ),
-          child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 14)),
         ),
       ),
     );

@@ -1,9 +1,7 @@
-// lib/screens/galery_screen.dart
-// Pantalla tipo “Live Channels” con fondo, degradado y lista de canales.
-// Soporta avatars en SVG (usa flutter_svg en pubspec).
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GalleryScreen extends StatelessWidget {
   const GalleryScreen({super.key});
@@ -14,7 +12,6 @@ class GalleryScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Fondo completo
           Positioned.fill(
             child: Image.asset(
               'assets/images/backgrounds/ira.jpg',
@@ -22,7 +19,6 @@ class GalleryScreen extends StatelessWidget {
             ),
           ),
 
-          // Degradado para oscurecer y dar contraste al panel inferior
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -38,16 +34,14 @@ class GalleryScreen extends StatelessWidget {
             ),
           ),
 
-          // Contenido principal
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
-
-                  const Spacer(), // empuja el panel a la parte baja
+                  const SizedBox(height: 80),
+                  const Spacer(),
 
                   const Text(
                     'Live Channels',
@@ -60,7 +54,6 @@ class GalleryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Panel con blur y bordes redondeados
                   ClipRRect(
                     borderRadius: BorderRadius.circular(24),
                     child: BackdropFilter(
@@ -77,6 +70,7 @@ class GalleryScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 24),
                 ],
               ),
@@ -88,7 +82,32 @@ class GalleryScreen extends StatelessWidget {
   }
 }
 
-/// Lista de canales (usa datos de ejemplo)
+// -----------------------------------------------------
+// MODELO CHANNEL
+// -----------------------------------------------------
+class Channel {
+  final String title;
+  final int viewers;
+  final String streamer;
+  final String thumb;
+  final String avatar;
+  final bool live;
+  final String youtubeUrl;
+
+  Channel({
+    required this.title,
+    required this.viewers,
+    required this.streamer,
+    required this.thumb,
+    required this.avatar,
+    required this.live,
+    required this.youtubeUrl,
+  });
+}
+
+// -----------------------------------------------------
+// LISTA DE CANALES
+// -----------------------------------------------------
 class _ChannelList extends StatelessWidget {
   const _ChannelList();
 
@@ -100,14 +119,25 @@ class _ChannelList extends StatelessWidget {
       thumb: 'assets/images/backgrounds/vitral.jpg',
       avatar: 'assets/images/svgs/nicromante.svg',
       live: true,
+      youtubeUrl: 'https://youtu.be/Gub3zXa35wg?si=sxnWlkAI9ZrtnAT2',
     ),
     Channel(
+      title: 'Diseño de nivel...',
+      viewers: 23500,
+      streamer: 'Javi',
+      thumb: 'assets/images/backgrounds/timeline.jpeg',
+      avatar: 'assets/images/svgs/odium.svg',
+      live: true,
+      youtubeUrl: 'https://youtu.be/c59L23hTWyc',
+    ),
+     Channel(
       title: 'Game Tour...',
       viewers: 23500,
       streamer: 'Ravi',
-      thumb: 'assets/images/backgrounds/ira.jpg',
+      thumb: 'assets/images/backgrounds/morado.jpg',
       avatar: 'assets/images/svgs/odium.svg',
       live: true,
+      youtubeUrl: 'https://youtube.com/watch?v=aqz-KE-bpKQ',
     ),
     Channel(
       title: 'World Tourn...',
@@ -116,6 +146,7 @@ class _ChannelList extends StatelessWidget {
       thumb: 'assets/images/backgrounds/ira.jpg',
       avatar: 'assets/images/svgs/stalker.svg',
       live: true,
+      youtubeUrl: 'https://youtube.com/watch?v=z9Ul9ccDOqE',
     ),
   ];
 
@@ -132,94 +163,108 @@ class _ChannelList extends StatelessWidget {
   }
 }
 
-/// Tarjeta/ítem de canal
+// -----------------------------------------------------
+// ITEM DE LA LISTA (TARJETA DEL CANAL)
+// -----------------------------------------------------
 class ChannelTile extends StatelessWidget {
   final Channel channel;
   const ChannelTile({super.key, required this.channel});
 
+  Future<void> _openYoutube() async {
+    final url = Uri.parse(channel.youtubeUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("❌ No se pudo abrir YouTube");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Miniatura con badge LIVE
-        Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
-                channel.thumb,
-                width: 88,
-                height: 60,
-                fit: BoxFit.cover,
+    return InkWell(
+      onTap: _openYoutube,
+      borderRadius: BorderRadius.circular(16),
+      child: Row(
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  channel.thumb,
+                  width: 88,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            if (channel.live)
-              Positioned(
-                top: 6,
-                left: 6,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'LIVE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.8,
+              if (channel.live)
+                Positioned(
+                  top: 6,
+                  left: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'LIVE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.8,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        ),
-        const SizedBox(width: 12),
-
-        // Info
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                channel.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(Icons.remove_red_eye, size: 14, color: Colors.white70),
-                  const SizedBox(width: 4),
-                  Text(
-                    _formatViewers(channel.viewers),
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  AvatarRound(assetPath: channel.avatar, radius: 9),
-                  const SizedBox(width: 6),
-                  Text(
-                    channel.streamer,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ],
-              ),
             ],
           ),
-        ),
-        const Icon(Icons.more_horiz, color: Colors.white38),
-      ],
+          const SizedBox(width: 12),
+
+          // INFO
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  channel.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(Icons.remove_red_eye, size: 14, color: Colors.white70),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatViewers(channel.viewers),
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    AvatarRound(assetPath: channel.avatar, radius: 9),
+                    const SizedBox(width: 6),
+                    Text(
+                      channel.streamer,
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.more_horiz, color: Colors.white38),
+        ],
+      ),
     );
   }
 
@@ -230,58 +275,23 @@ class ChannelTile extends StatelessWidget {
   }
 }
 
-/// Modelo simple
-class Channel {
-  final String title;
-  final int viewers;
-  final String streamer;
-  final String thumb;
-  final String avatar;
-  final bool live;
-
-  Channel({
-    required this.title,
-    required this.viewers,
-    required this.streamer,
-    required this.thumb,
-    required this.avatar,
-    this.live = true,
-  });
-}
-
-/// Avatar redondo que soporta SVG y raster
+// -----------------------------------------------------
+// CÍRCULO DE AVATAR SVG
+// -----------------------------------------------------
 class AvatarRound extends StatelessWidget {
   final String assetPath;
   final double radius;
-
-  const AvatarRound({
-    super.key,
-    required this.assetPath,
-    this.radius = 9,
-  });
-
-  bool get _isSvg => assetPath.toLowerCase().endsWith('.svg');
+  const AvatarRound({super.key, required this.assetPath, required this.radius});
 
   @override
   Widget build(BuildContext context) {
-    final size = radius * 2;
-
-    if (_isSvg) {
-      return ClipOval(
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: SvgPicture.asset(
-            assetPath,
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
-    } else {
-      return CircleAvatar(
-        radius: radius,
-        backgroundImage: AssetImage(assetPath),
-      );
-    }
+    return ClipOval(
+      child: SvgPicture.asset(
+        assetPath,
+        width: radius * 2,
+        height: radius * 2,
+        fit: BoxFit.cover,
+      ),
+    );
   }
 }

@@ -66,34 +66,48 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                 const SizedBox(height: 40),
 
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 84, 0, 0),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 80,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                   onPressed: () {
-                     Navigator.pushReplacementNamed(context, '/splash');
-                  },
-                    child: Text(
-                    'LOGIN',
-  style: AppTextStyles.title.copyWith(
-    color: const Color.fromARGB(255, 0, 0, 0),
-    fontSize: 18,
-    fontWeight: FontWeight.w900,
-    letterSpacing: 2.0,
+ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Color.fromARGB(255, 84, 0, 0),
+    padding: EdgeInsets.symmetric(
+      horizontal: 80,
+      vertical: 14,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+  onPressed: () {
+    Navigator.pushReplacementNamed(context, '/splash');
+  },
+  child: Text(
+    'LOGIN',
+    style: AppTextStyles.title.copyWith(
+      color: Colors.black,
+      fontSize: 18,
+      fontWeight: FontWeight.w900,
+      letterSpacing: 2.0,
+    ),
   ),
 ),
 
+const SizedBox(height: 20),
 
-                  ),
+GestureDetector(
+  onTap: () {
+    Navigator.pushNamed(context, '/register');
+  },
+  child: Text(
+    "¿No tienes cuenta? Regístrate",
+    style: TextStyle(
+      color: const Color.fromRGBO(178, 132, 5, 1.0),
+      fontSize: 15,
+      decoration: TextDecoration.underline,
+    ),
+  ),
+),
                 ],
               ),
             ),
@@ -102,4 +116,4 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-}
+} 

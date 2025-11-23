@@ -34,7 +34,7 @@ class ExTenebrisApp extends StatelessWidget {
           }),
         ),
       ),
-      initialRoute: '/register',
+      initialRoute: '/login',
       routes: {
         '/register': (context) => const RegisterScreen(),
         '/login': (context) => const LoginScreen(),
