@@ -1,92 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'memorare.dart';
 
 class BestiariumScreen extends StatelessWidget {
   const BestiariumScreen({super.key});
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // HEADER CON IMAGEN DE FONDO
-              Stack(
-                children: [
-                  // Fondo
-                  Container(
-                    height: 260,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/backgrounds/vitral.jpg'),
-                        fit: BoxFit.cover,
+
+body: WillPopScope(
+        onWillPop: () async {
+          // Si el botón de retroceso del dispositivo es presionado, 
+          // navega a la vista MemorareScreen (reemplazando la pila actual).
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MemorareScreen()),
+          );
+          // Retorna false para evitar que la acción de retroceso predeterminada se ejecute.
+          return false;
+        },
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // HEADER CON IMAGEN DE FONDO
+                Stack(
+                  children: [
+                    // Fondo
+                    Container(
+                      height: 260,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/backgrounds/vitral.jpg'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  // Capa oscura
-                  Container(
-                    height: 260,
-                    color: Colors.black.withOpacity(0.55),
-                  ),
-                  // Barra superior
-                  Positioned(
-                    top: 16,
-                    left: 16,
-                    right: 16,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Bestiarium',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                    // Capa oscura
+                    Container(
+                      height: 260,
+                      color: Colors.black.withOpacity(0.55),
                     ),
-                  ),
-                  // Imagen principal y título
-                  Positioned.fill(
-                    top: 80,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Imagen SVG de la criatura
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF3B2B1F),
-                            borderRadius: BorderRadius.circular(20),
+                    // Barra superior (MODIFICADA)
+                    Positioned(
+                      top: 16,
+                      left: 8, // Ajustado a 8 para que el icono tenga espacio
+                      right: 16,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // 2. Botón de Retroceso Explícito (FLECHA)
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () {
+                              // Navegación explícita al presionar el icono
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) => const MemorareScreen()),
+                              );
+                            },
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: SvgPicture.asset(
-                              'assets/images/svgs/cascara.svg',
-                              fit: BoxFit.cover,
+                          
+                          // Título "Bestiarium"
+                          const Expanded(
+                            child: Text(
+                              'Bestiarium',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Cáscara',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                          // Aquí iría el segundo elemento si existiera
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    // Imagen principal y título (resto del Stack...)
+                    Positioned.fill(
+                      top: 80,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // ... (resto del código)
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3B2B1F),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: SvgPicture.asset(
+                                'assets/images/svgs/cascara.svg',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Cáscara',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
 
               const SizedBox(height: 24),
 
@@ -180,6 +207,7 @@ class BestiariumScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
