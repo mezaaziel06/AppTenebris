@@ -3,16 +3,16 @@ class UserModel {
   final String email;
   final String displayName;
   final String avatarUrl;
-  final String createdAt;
-  final String updatedAt;
+  final String? createdAt;
+  final String? updatedAt;
 
   UserModel({
     required this.id,
     required this.email,
     required this.displayName,
     required this.avatarUrl,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
