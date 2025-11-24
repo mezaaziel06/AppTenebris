@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
-import 'screens/login/register_screen.dart';    
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'screens/login/register_screen.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/pages/gallery_screen.dart';
 import 'screens/navbar/navbar.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: "https://lriywzjlvzxtqppyaqqh.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyaXl3empsdnp4dHFwcHlhcXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5MzM2NDQsImV4cCI6MjA3OTUwOTY0NH0.4HK-U1qJK3gQmHsrvbRuLpvLIabVANYik_ETuFz1nOw", // pega tu anon key aquí
+  );
+
   runApp(const ExTenebrisApp());
 }
 
@@ -39,8 +48,6 @@ class ExTenebrisApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/login': (context) => const LoginScreen(),
         '/splash': (context) => const SplashScreen(),
-
-        // NUEVO: Home con bottom nav
         '/app': (context) => const AppShell(),
       },
     );

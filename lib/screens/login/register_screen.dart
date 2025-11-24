@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:apptenebris/services/auth_service.dart';
 import 'package:apptenebris/core/constants/text_styles.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,48 +10,36 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmController = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final passCtrl = TextEditingController();
+  final confirmCtrl = TextEditingController();
 
-  Future<void> _registerUser() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    final confirm = _confirmController.text;
+  Future<void> _register() async {
+    final email = emailCtrl.text.trim();
+    final pass = passCtrl.text.trim();
+    final confirm = confirmCtrl.text.trim();
 
-    if (username.isEmpty || password.isEmpty || confirm.isEmpty) {
-      _showMessage('Todos los campos son obligatorios');
-      return;
+    if (email.isEmpty || pass.isEmpty || confirm.isEmpty) {
+      return _msg("Todos los campos son obligatorios");
     }
 
-    if (password != confirm) {
-      _showMessage('Las contraseñas no coinciden');
-      return;
+    if (pass != confirm) {
+      return _msg("Las contraseñas no coinciden");
     }
 
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/auth/register/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'username': username,
-        'password': password,
-        'confirm_password': confirm,
-      }),
-    );
+    final auth = AuthService();
+    final ok = await auth.register(email, pass);
 
-    if (response.statusCode == 201) {
-      _showMessage('Usuario creado con éxito');
-      Navigator.pushReplacementNamed(context, '/login');
+    if (ok) {
+      _msg("Registro exitoso. Bienvenido 👑");
+      Navigator.pushReplacementNamed(context, "/splash");
     } else {
-      _showMessage('Error al registrar: ${response.body}');
+      _msg("No se pudo registrar");
     }
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void _msg(String t) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t)));
   }
 
   @override
@@ -61,70 +48,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Stack(
         children: [
           SizedBox.expand(
-            child: Image.asset(
-              'assets/images/backgrounds/vitral.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+              child: Image.asset(
+            "assets/images/backgrounds/vitral.jpg",
+            fit: BoxFit.cover,
+          )),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  _buildTextField(_usernameController, 'USERNAME'),
+                  _input(emailCtrl, "EMAIL"),
                   const SizedBox(height: 20),
-                  _buildTextField(
-                    _passwordController,
-                    'PASSWORD',
-                    obscure: true,
-                  ),
+                  _input(passCtrl, "PASSWORD", obscure: true),
                   const SizedBox(height: 20),
-                  _buildTextField(
-                    _confirmController,
-                    'CONFIRM PASSWORD',
-                    obscure: true,
-                  ),
+                  _input(confirmCtrl, "CONFIRM PASSWORD", obscure: true),
                   const SizedBox(height: 40),
                   ElevatedButton(
+                    onPressed: _register,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 84, 0, 0),
+                      backgroundColor: const Color(0xFF540000),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 80,
-                        vertical: 14,
-                      ),
+                          horizontal: 80, vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
                     child: Text(
-                      'REGISTER',
+                      "REGISTER",
                       style: AppTextStyles.title.copyWith(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 18,
+                        color: Colors.black,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 2.0,
+                        fontSize: 18,
+                        letterSpacing: 2,
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label, {
-    bool obscure = false,
-  }) {
+  Widget _input(TextEditingController c, String label, {bool obscure = false}) {
     return TextField(
-      controller: controller,
+      controller: c,
       obscureText: obscure,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
