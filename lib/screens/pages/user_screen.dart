@@ -41,23 +41,23 @@ class UserScreen extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 // Nombre del usuario
-                // Nombre del usuario
-Container(
-  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-  decoration: BoxDecoration(
-    color: Color.fromARGB(105, 14, 14, 1), // Fondo rojo
-    borderRadius: BorderRadius.circular(30), // Forma ovalada
-  ),
-  child: const Text(
-    'SirGalahad',
-    style: TextStyle(
-      color: Colors.white, // Texto blanco
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.2,
-    ),
-  ),
-),
+                
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            decoration: BoxDecoration(
+            color: Color.fromARGB(105, 14, 14, 1), // Fondo rojo
+            borderRadius: BorderRadius.circular(30), // Forma ovalada
+          ),
+            child: const Text(
+              'SirGalahad',
+            style: TextStyle(
+            color: Colors.white, // Texto blanco
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            ),
+          ),
+        ),
 
 
                 const SizedBox(height: 8),

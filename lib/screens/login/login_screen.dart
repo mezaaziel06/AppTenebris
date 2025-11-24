@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:apptenebris/core/constants/text_styles.dart';
-import '../splash/splash_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -17,7 +16,7 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
 
-         
+        
           // 🔲 Contenido principal (formulario)
           Center(
             child: SingleChildScrollView(
@@ -79,8 +78,8 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                   onPressed: () {
-                     Navigator.pushReplacementNamed(context, '/splash');
+                  onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/splash');
                   },
                     child: Text(
                     'LOGIN',

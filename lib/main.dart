@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/splash/splash_screen.dart';
-import 'screens/pages/gallery_screen.dart';
 import 'screens/navbar/navbar.dart';
 
 void main() {
