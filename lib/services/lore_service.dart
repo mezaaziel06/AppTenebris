@@ -6,7 +6,7 @@ import 'avatar_service.dart'; // reutilizamos MediaItem
 
 class LoreService {
   final _storage = const FlutterSecureStorage();
-    final String baseUrl = "http://10.132.157.176:8000";
+    final String baseUrl = "http://192.168.0.111:8000";
 
   Future<List<MediaItem>> getLore() async {
     final token = await _storage.read(key: "access_token");

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
-
+import '../../services/pdf_brain.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // -----------------------------------------------------------------------------
 // ChatbotScreen (archivo listo para pegar)
 // -----------------------------------------------------------------------------
@@ -87,7 +88,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
     Future.delayed(const Duration(milliseconds: 400), () async {
       // Puedes cambiar _getBotReplyLocal por _getBotReplyFromApi para usar tu API.
-      final reply = await _getBotReplyLocal(text);
+      final reply = await _getBotReplyFromApi(text);
+
       setState(() {
         _isTyping = false;
         _items.add(
@@ -117,67 +119,63 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  // Respuesta simple local (puedes expandir la lógica)
-  Future<String> _getBotReplyLocal(String question) async {
-    final q = question.toLowerCase();
-    if (q.contains('nivel')) {
-      return 'Observa los patrones en la sala: los lamentos forman la clave.';
-    } else if (q.contains('pista')) {
-      return 'Escucha el eco. A veces el silencio está resaltado en rojo.';
-    } else if (q.contains('odium')) {
-      return 'Odium se alimenta de recuerdos rotos. Busca su símbolo en la pared.';
-    } else if (q.contains('hola') || q.contains('hey')) {
-      return 'Hola, soy tu guía. ¿En qué parte te atoras?';
-    }
-    return 'Interesante... No tengo una respuesta concreta aún, prueba otra pregunta o usa las sugerencias.';
-  }
-
   // Ejemplo: obtener respuesta desde tu API (descomenta y adapta)
-  Future<String> _getBotReplyFromApi(String question) async {
-    try {
-      // Cambia la URL por la de tu API
-      final response = await _dio.post(
-        'https://tu-api.com/chat',
-        data: {'message': question},
-      );
-      // Ajusta según la estructura de tu respuesta
-      if (response.data != null) {
-        // Ejemplo: { "answer": "texto..." }
-        final data = response.data;
-        final answer = data['answer'] ?? data['result'] ?? data['message'];
-        return answer?.toString() ?? 'Respuesta inválida desde la API';
-      }
-      return 'La API no devolvió datos';
-    } catch (e) {
-      // Manejo simple de errores
-      return 'Error al conectar con la API: ${e.toString()}';
+Future<String> _getBotReplyFromApi(String question) async {
+  try {
+    final storage = const FlutterSecureStorage();
+    final token = await storage.read(key: "access_token");
+
+    if (token == null) {
+      return "No se encontró token. Inicia sesión para consultar la guía.";
     }
+
+    final response = await _dio.post(
+      'http://192.168.0.111:8000/v1/lore/chat',
+      data: {"question": question},
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      ),
+    );
+
+    return response.data["answer"] ?? "La guía guardó silencio...";
+  } catch (e) {
+    return "No pude contactar la Guía... Error: $e";
   }
+}
+
+
 
   // Si el usuario toca una sugerencia
-  void _onSuggestionTap(String text) {
+
+void _onSuggestionTap(String text) {
+  setState(() {
+    _items.add(_Message(name: 'Tú', text: text, isUser: true));
+    _isTyping = true;
+  });
+  _scrollToBottom();
+
+  Future.delayed(const Duration(milliseconds: 400), () async {
+    final reply = await _getBotReplyFromApi(text); // <-- IA real
+
     setState(() {
-      _items.add(_Message(name: 'Tú', text: text, isUser: true));
-      _isTyping = true;
+      _isTyping = false;
+      _items.add(
+        _Message(
+          name: 'Guía',
+          text: reply,
+          isUser: false,
+          avatar: '${commentAvatarsPath}stalker.svg',
+        ),
+      );
     });
     _scrollToBottom();
+  });
+}
 
-    Future.delayed(const Duration(milliseconds: 400), () async {
-      final reply = await _getBotReplyLocal(text);
-      setState(() {
-        _isTyping = false;
-        _items.add(
-          _Message(
-            name: 'Guía',
-            text: reply,
-            isUser: false,
-            avatar: '${commentAvatarsPath}stalker.svg',
-          ),
-        );
-      });
-      _scrollToBottom();
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {

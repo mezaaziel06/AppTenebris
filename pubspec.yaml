@@ -54,6 +54,9 @@ dependencies:
   url_launcher: ^6.1.10
   flutter_secure_storage: ^9.0.0
   supabase_flutter: ^2.10.3
+  syncfusion_flutter_pdf: ^31.2.15
+
+
 
 dev_dependencies:
   flutter_test:
@@ -81,7 +84,7 @@ flutter:
   assets:
     - assets/images/backgrounds/
     - assets/images/svgs/
-
+    - assets/data/DocumentoGuíaFuente.pdf
     
 
 
