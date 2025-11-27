@@ -69,7 +69,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen> {
                   itemCount: avatars.length,
                   itemBuilder: (_, i) {
                     final avatar = avatars[i];
-                    final url = avatar["url"];
+                    final url = avatar.url;
 
                     final isSelected = selectedAvatar == url;
 

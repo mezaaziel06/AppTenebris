@@ -60,7 +60,7 @@ class AuthService {
 
       // 4. Forzar que el backend cree el profile
       await http.get(
-        Uri.parse("http://192.168.0.111:8000/v1/users/profile"),
+        Uri.parse("http://10.10.57.29:8000/v1/users/profile"),
         headers: {"Authorization": "Bearer $token"},
       );
 

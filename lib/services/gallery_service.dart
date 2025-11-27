@@ -3,7 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class GalleryService {
-  final String baseUrl = "http://192.168.0.111:8000";
+  final String baseUrl = "http://10.132.157.176:8000";
+
   final _storage = const FlutterSecureStorage();
 
   Future<List<dynamic>> getYoutubeVideos() async {

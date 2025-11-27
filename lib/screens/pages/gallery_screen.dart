@@ -58,34 +58,36 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
           ),
 
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 80),
-                  const Spacer(),
+SafeArea(
+  child: SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 80),
 
-                  const Text(
-                    'Live Channels',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  _buildList(),
-
-                  const SizedBox(height: 24),
-                ],
-              ),
+          const Text(
+            'Live Channels',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.1,
             ),
           ),
+
+          const SizedBox(height: 12),
+
+          _buildList(),
+
+          const SizedBox(height: 24),
         ],
+      ),
+    ),
+  ),
+),
+],
       ),
     );
   }

@@ -2,11 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user_model.dart';
 
+
 class UserService {
   final Dio _dio = Dio();
   final _storage = const FlutterSecureStorage();
 
-  final String baseUrl = "http://192.168.0.111:8000";
+  final String baseUrl = "http://10.132.157.176:8000";
+
 
   Future<String?> _getToken() async {
     return await _storage.read(key: "access_token");
