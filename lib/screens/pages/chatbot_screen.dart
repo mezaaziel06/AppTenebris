@@ -87,7 +87,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     setState(() => _isTyping = true);
 
     Future.delayed(const Duration(milliseconds: 400), () async {
-      // Puedes cambiar _getBotReplyLocal por _getBotReplyFromApi para usar tu API.
       final reply = await _getBotReplyFromApi(text);
 
       setState(() {
@@ -130,7 +129,7 @@ Future<String> _getBotReplyFromApi(String question) async {
     }
 
     final response = await _dio.post(
-      'http://192.168.0.111:8000/v1/lore/chat',
+      'https://backe-tenebris.fly.dev/v1/lore/chat',
       data: {"question": question},
       options: Options(
         headers: {
