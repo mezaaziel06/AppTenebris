@@ -3,9 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import '../../services/pdf_brain.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// -----------------------------------------------------------------------------
-// ChatbotScreen (archivo listo para pegar)
-// -----------------------------------------------------------------------------
+
 void main() {
   runApp(
     const MaterialApp(debugShowCheckedModeBanner: false, home: ChatbotScreen()),
