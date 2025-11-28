@@ -99,9 +99,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   #fonts:
-   # - family: CinzelDecorative
+  # - family: CinzelDecorative
     #  fonts:
-     #   - asset: assets/fonts/CinzelDecorative-Regular.ttf
+    #   - asset: assets/fonts/CinzelDecorative-Regular.ttf
         
   #
   # For details regarding fonts from package dependencies,

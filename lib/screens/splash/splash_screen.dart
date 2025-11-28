@@ -1,7 +1,5 @@
-import 'package:apptenebris/screens/pages/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../screens/login/login_screen.dart';
 import 'dart:math' as math;
 
 class SplashScreen extends StatefulWidget {

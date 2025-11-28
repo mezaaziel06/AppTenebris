@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/login/register_screen.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/splash/splash_screen.dart';
-import 'screens/pages/gallery_screen.dart';
 import 'screens/navbar/navbar.dart';
 
 void main() async {

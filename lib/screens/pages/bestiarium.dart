@@ -8,7 +8,7 @@ class BestiariumScreen extends StatelessWidget {
 
   const BestiariumScreen({super.key, required this.media});
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -95,7 +95,7 @@ class BestiariumScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
+      );
   }
 
   Widget _sectionTitle(String text) {

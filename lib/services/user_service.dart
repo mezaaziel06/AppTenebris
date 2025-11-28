@@ -1,15 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user_model.dart';
-
+import '../models/GameDataModel.dart';
 
 class UserService {
   final Dio _dio = Dio();
   final _storage = const FlutterSecureStorage();
 
   final String baseUrl = "https://backe-tenebris.fly.dev";
-
-
 
   Future<String?> _getToken() async {
     return await _storage.read(key: "access_token");
@@ -58,4 +56,16 @@ class UserService {
       avatarUrl: res.data["avatar_url"],
     );
   }
+
+  Future<GameDataModel?> getLatestGameData() async {
+    final token = await _getToken();
+
+    final res = await _dio.get(
+      "$baseUrl/v1/games/latest",
+      options: Options(headers: {"Authorization": "Bearer $token"}),
+    );
+
+    return GameDataModel.fromJson(res.data);
+  }
 }
+

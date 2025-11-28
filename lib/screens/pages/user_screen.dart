@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
 import '../../models/user_model.dart';
 import '../pages/profileedit_screen.dart';
+import '../../models/GameDataModel.dart';
+
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -13,6 +15,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   UserModel? userData;
+  GameDataModel? gameData;
   bool isLoading = true;
 
   final _service = UserService();
@@ -23,18 +26,22 @@ class _UserScreenState extends State<UserScreen> {
     loadUser();
   }
 
-  Future<void> loadUser() async {
-    try {
-      final data = await _service.getUser();
-      setState(() {
-        userData = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      print("❌ Error cargando usuario: $e");
-      setState(() => isLoading = false);
-    }
+Future<void> loadUser() async {
+  try {
+    final data = await _service.getUser();
+    final game = await _service.getLatestGameData();
+
+    setState(() {
+      userData = data;
+      gameData = game;
+      isLoading = false;
+    });
+  } catch (e) {
+    print("❌ Error cargando datos: $e");
+    setState(() => isLoading = false);
   }
+}
+
 
   Future<void> _openEdit() async {
     if (userData == null) return;
@@ -47,7 +54,7 @@ class _UserScreenState extends State<UserScreen> {
     );
 
     if (changed == true) {
-      await loadUser(); // 🔥 Reload total desde backend
+      await loadUser(); 
     }
   }
 
@@ -243,16 +250,17 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   // STATS
-  Widget _buildStatsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _statBox("45", "Muertes"),
-        _statBox("120", "Zonas"),
-        _statBox("3420", "Lúgubres"),
-      ],
-    );
-  }
+Widget _buildStatsRow() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      _statBox("${gameData?.deaths ?? 0}", "Muertes"),
+      _statBox("${gameData?.currentZone ?? '-'}", "Zona Actual"),
+      _statBox("${gameData?.score ?? 0}", "Lúgubres"),
+    ],
+  );
+}
+
 
   Widget _statBox(String value, String label) {
     return Container(
